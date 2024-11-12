@@ -1,0 +1,4 @@
+define_plugin plugin_1
+plugin_1=${plugin_1:-default}
+# settings file for template
+enable_service template
