@@ -1,52 +1,74 @@
- 
-# plugin.sh - DevStack plugin.sh dispatch script template
+#!/bin/bash
 
-function install_template {
-    ...
+# Flask dependencies function
+function install_flask_dependencies {
+    echo "Installing Flask and dependencies..."
+    
+    # venv creation
+    if [[ ! -d "$APP_DIR/venv" ]]; then
+        python3 -m venv "$APP_DIR/venv"
+    fi
+
+    # venv activation
+    source "$APP_DIR/venv/bin/activate"
+
+    # install requirements
+    if [[ -f "$APP_DIR/requirements.txt" ]]; then
+        pip install -r "$APP_DIR/requirements.txt" || { echo "Failed to install dependencies"; exit 1; }
+    else
+        echo "requirements.txt not found!"
+        exit 1
+    fi
+
+    # venv deactivation
+    deactivate
 }
 
-function init_template {
-    ...
+# Move service file function
+function copy_service_file {
+    echo "Moving service file to systemd directory..."
+    sudo cp "$SERVICE_DIR/openstack-plugin-flask.service" "$SYSTEMD_DIR" || { echo "Failed to copy service file"; exit 1; }
+    sudo systemctl enable openstack-plugin-flask.service || { echo "Failed to enable systemd plugin service"; exit 1; }
+    sudo systemctl daemon-reload || { echo "Failed to reload systemd daemon"; exit 1; }
 }
 
-function configure_template {
-    ...
+# Start flask plugin
+function start_flask_plugin {
+    echo "Starting Flask service..."
+    sudo systemctl start openstack-plugin-flask.service || { echo "Failed to start service"; exit 1; }
 }
 
-# check for service enabled
-if is_service_enabled template; then
+# Configure flask plugin
+function configure_flask_plugin {
+    echo "Configuring Flask service..."
+    # Add configuration here
+}
+
+if is_service_enabled openstack-plugin-flask; then
 
     if [[ "$1" == "stack" && "$2" == "pre-install" ]]; then
-        # Set up system services
-        echo_summary "Configuring system services Template"
-        install_package cowsay
+        echo_summary "No additional packages to install for Flask Plugin."
 
     elif [[ "$1" == "stack" && "$2" == "install" ]]; then
-        # Perform installation of service source
-        echo_summary "Installing Template"
-        install_template
+        echo_summary "Installing Flask Plugin"
+        install_flask_dependencies
+        copy_service_file
 
     elif [[ "$1" == "stack" && "$2" == "post-config" ]]; then
-        # Configure after the other layer 1 and 2 services have been configured
-        echo_summary "Configuring Template"
-        configure_template
+        echo_summary "Configuring Flask Plugin"
+        configure_flask_plugin
 
     elif [[ "$1" == "stack" && "$2" == "extra" ]]; then
-        # Initialize and start the template service
-        echo_summary "Initializing Template"
-        init_template
+        echo_summary "Initializing Flask Plugin"
+        start_flask_plugin
     fi
 
     if [[ "$1" == "unstack" ]]; then
-        # Shut down template services
-        # no-op
-        :
+        echo_summary "Stopping Flask service..."
+        sudo systemctl stop openstack-plugin-flask.service || { echo "Failed to stop service"; exit 1; }
     fi
 
     if [[ "$1" == "clean" ]]; then
-        # Remove state and transient data
-        # Remember clean.sh first calls unstack.sh
-        # no-op
-        :
+        sudo rm "$SYSTEMD_DIR/openstack-plugin-flask.service"
     fi
 fi
