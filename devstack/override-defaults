@@ -1,1 +1,0 @@
- export CINDER_ENABLED_BACKENDS=${CINDER_ENABLED_BACKENDS:-"plugin_backend"}

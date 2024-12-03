@@ -1,8 +1,8 @@
 # settings openstack
-enable_service openstack1
+enable_service Openstack1
 
 # used directories
-PLUGIN_DIR=$DEST/openstack1
+PLUGIN_DIR=$DEST/Openstack1
 APP_DIR=$PLUGIN_DIR/app
 SERVICE_DIR=$PLUGIN_DIR/devstack/service
 SYSTEMD_DIR=/etc/systemd/system

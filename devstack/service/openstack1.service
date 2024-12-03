@@ -5,8 +5,8 @@ After=network.target
 [Service]
 User=stack
 Type=simple
-WorkingDirectory=/opt/stack/openstack1
-ExecStart=/opt/stack/openstack1/app/venv/bin/python3 /opt/stack/openstack1/app/app.py
+WorkingDirectory=/opt/stack/Openstack1
+ExecStart=/opt/stack/Openstack1/app/venv/bin/python3 /opt/stack/Openstack1/app/app.py
 Restart=on-failure
 
 [Install]
